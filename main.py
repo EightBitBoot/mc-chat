@@ -1,5 +1,6 @@
 import sys
 import os
+import copy
 
 import getpass
 import uuid
@@ -10,6 +11,37 @@ import requests
 CLIENT_ID_FILENAME = "clientId.txt"
 
 AUTHENTICATION_URL = "https://authserver.mojang.com/authenticate"
+
+def lshift(value, n):
+    return (value & 0xFFFFFFFF) << n
+
+def rshift(value, n):
+    return (value & 0xFFFFFFFF) >> n
+
+def encodeVarint(value):
+    val = copy.deepcopy(value)
+    buffer = bytearray()
+
+    # JUST ADD A DO WHILE LOOP PYTHON COME ON
+    while True:
+        temp = val & 0b01111111
+        val = rshift(val, 7)
+
+        if val != 0:
+            temp |= 0b10000000
+
+        buffer.append(temp)
+        
+        if val == 0:
+            break
+
+    return bytes(buffer)
+
+
+def decodeVarint(varint):
+    # TODO(Adin): Finish me
+    pass
+
 
 def getClientId():
     result = None
@@ -31,6 +63,14 @@ def buildRequestPayload(uname, passwd, clientId):
 
 
 def main(argv):
+    print(encodeVarint(0))
+    print(encodeVarint(0x7F))
+    print(encodeVarint(2097151))
+    print(encodeVarint(-1))
+    print(encodeVarint(-2147483648))
+
+    quit()
+    
     uname = input("username> ")
     passwd = getpass.getpass("password> ")
     clientId = getClientId()
