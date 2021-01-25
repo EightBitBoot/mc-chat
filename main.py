@@ -15,32 +15,47 @@ AUTHENTICATION_URL = "https://authserver.mojang.com/authenticate"
 def lshift(value, n):
     return (value & 0xFFFFFFFF) << n
 
+
 def rshift(value, n):
     return (value & 0xFFFFFFFF) >> n
 
+
 def encodeVarint(value):
-    val = copy.deepcopy(value)
     buffer = bytearray()
 
     # JUST ADD A DO WHILE LOOP PYTHON COME ON
     while True:
-        temp = val & 0b01111111
-        val = rshift(val, 7)
+        temp = value & 0b01111111
+        value = rshift(value, 7)
 
-        if val != 0:
+        if value != 0:
             temp |= 0b10000000
 
         buffer.append(temp)
         
-        if val == 0:
+        if value == 0:
             break
 
     return bytes(buffer)
 
 
-def decodeVarint(varint):
-    # TODO(Adin): Finish me
-    pass
+def decodeVarint(packet):
+    result = 0
+    current = 0
+    numRead = 0
+
+    while True:
+        current = packet.read(1)[0]
+        result |= lshift((current & 0b01111111), numRead * 7)
+        numRead += 1
+
+        if current & 0b10000000 == 0:
+            break
+
+    if result & (1 << 31):
+        result -= 1 << 32
+
+    return result
 
 
 def getClientId():
@@ -67,6 +82,7 @@ def main(argv):
     
     uname = input("username> ")
     passwd = getpass.getpass("password> ")
+
     clientId = getClientId()
 
     if not os.path.exists(CLIENT_ID_FILENAME):
