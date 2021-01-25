@@ -1,3 +1,5 @@
+# Ignore local editor settings
+.vscode/
 
 # Ignore the saved clientid
 clientId.txt

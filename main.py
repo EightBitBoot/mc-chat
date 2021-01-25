@@ -63,13 +63,7 @@ def buildRequestPayload(uname, passwd, clientId):
 
 
 def main(argv):
-    print(encodeVarint(0))
-    print(encodeVarint(0x7F))
-    print(encodeVarint(2097151))
-    print(encodeVarint(-1))
-    print(encodeVarint(-2147483648))
-
-    quit()
+    print("Make sure no one is looking over your shoulder: this prints sensitive information to the console\n")
     
     uname = input("username> ")
     passwd = getpass.getpass("password> ")
